@@ -33,7 +33,8 @@ def get_metadata(filenames, target_directory):
         for f in filenames:
             name = str(os.path.relpath(f, target_directory)) #Relative path to file
             date, coordinates = process(f)
-            data_array.append((name,date,coordinates))
+            if coordinates[0] != None and coordinates[1] != None:
+                data_array.append((name,date,coordinates))
         result = {k:d for d,k in zip(zip(*data_array),['names','dates','coordinates'])}
         print(str(len(result['names']))+' images have been added to the map: ', result['names']) #Debug: to show dataset
         return result
