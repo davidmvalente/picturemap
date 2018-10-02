@@ -17,6 +17,6 @@ def main():
     pictures_data['centre'] = set_centre(pictures_data['coordinates']) #Find centre coordinates
     #Build the map
     build(pictures_data, target_directory)
-    launch(target_directory+'/picturemap.html')
+    launch(target_directory+'picturemap.html')
 
 main()

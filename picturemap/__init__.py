@@ -7,13 +7,13 @@ import os, subprocess
 def build(data, target):
     #Copy basemap file to target_directory
     with open(os.path.dirname(__file__)+'/basemap.html', 'r') as inputhtml:
-        with open(target+'/picturemap.html', 'w') as outputhtml:
-            print('Writing '+target+'/picturemap.html')
+        with open(target+'picturemap.html', 'w') as outputhtml:
+            print('Writing '+target+'picturemap.html')
             for line in inputhtml:
                 outputhtml.write(line)
     #Export data to JSON
-    with open(target+'/picturemap_data.json', 'w') as outfile:
-        print('Writing '+target+'/picturemap_data.json')
+    with open(target+'picturemap_data.json', 'w') as outfile:
+        print('Writing '+target+'picturemap_data.json')
         outfile.write('var picturemap_obj = ')
         dump(data, outfile, sort_keys=True)
 
@@ -36,6 +36,9 @@ def get_metadata(filenames, target_directory):
             if coordinates[0] != None and coordinates[1] != None:
                 data_array.append((name,date,coordinates))
         result = {k:d for d,k in zip(zip(*data_array),['names','dates','coordinates'])}
+        if  len(result) < 1:
+            print('No images with GPS coordinates found.')
+            sys.exit(1)
         print(str(len(result['names']))+' images have been added to the map: ', result['names']) #Debug: to show dataset
         return result
 
