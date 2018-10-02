@@ -44,5 +44,6 @@ def get_metadata(filenames, target_directory):
 
 def set_target(paths_to_files):
     target = os.path.dirname(os.path.commonprefix(paths_to_files))
+    target = str(target) + '/'
     print('Setting '+str(target)+' as destination path.')
     return target
