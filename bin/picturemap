@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+import sys
+from picturemap import *
+
+def main():
+    #Read arguments
+    script = sys.argv[0]
+    filenames = sys.argv[1:]
+    if len(sys.argv) < 2:
+      print("Please specify image files, e.g. picturemap Pictures/*.jpg")
+      sys.exit(1)  # abort because of error
+    #Pick destination path for visualization filenames
+    target_directory = set_target(filenames)
+    #Process files
+    pictures_data = get_metadata(filenames, target_directory) #Get name, date, coordinates
+    pictures_data['centre'] = set_centre(pictures_data['coordinates']) #Find centre coordinates
+    #Build the map
+    build(pictures_data, target_directory)
+    launch(target_directory+'/picturemap.html')
+
+main()
