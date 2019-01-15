@@ -17,7 +17,7 @@ def main():
 
     elif os.path.isdir(arguments[0]):
         print(arguments[0]+' is a directory')
-        print('Looking for all JPG files: '+arguments[0]+'/**/*.JPG')
+        print('Looking for all JPG files: '+arguments[0]+'/**/*.JPG\n')
         filenames = []
         for filename in glob.iglob(arguments[0]+'/**/*.JPG', recursive=True):
             filenames.append(filename)
@@ -25,11 +25,14 @@ def main():
     else:
         filenames = arguments
 
-    print(str(len(filenames))+ ' image files were found.')
+    print(str(len(filenames))+ ' image files were found.\n') # NOTE
 
     #Pick destination path for visualization filenames
     target_directory = set_target(filenames)
+    print('Setting '+str(target_directory)+' as destination path.')
+
     #Process files
+    print('Extracting metadata...\n')
     pictures_data = get_metadata(tqdm(filenames), target_directory) #Get name, date, coordinates
 
     pictures_data['centre'] = set_centre(pictures_data['coordinates']) #Find centre coordinates

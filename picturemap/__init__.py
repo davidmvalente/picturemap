@@ -31,7 +31,6 @@ def set_centre(coordinates):
     return [sum(i)/len(i) for i in zip(*coordinates)] #Average coordinates
 
 def get_metadata(filenames, target_directory):
-        print('Extracting metadata...')
 
         data_array = []
 
@@ -39,12 +38,16 @@ def get_metadata(filenames, target_directory):
             name = str(os.path.relpath(f, target_directory)) #Relative path to file
             date, coordinates = process(f)
 
+            no_coordinates = 0
+
             if coordinates[0] != None and coordinates[1] != None:
                 data_array.append((name,date,coordinates))
             else:
-                print(name+'has no GPS coordinates.')
+                no_coordinates += 1
 
         result = {k:d for d,k in zip(zip(*data_array),['names','dates','coordinates'])}
+
+        print(str(no_coordinates)+' images have no GPS coordinates.')
 
         test_metadata(result)
 
@@ -53,11 +56,19 @@ def get_metadata(filenames, target_directory):
 def test_metadata(picture_data):
 
     if  len(picture_data) < 1:
-        print('No images with GPS coordinates found.')
-        raise FileError
+        raise FileNotFoundError('No images with GPS coordinates found.')
 
+    assert 'names' in picture_data
+    assert 'dates' in picture_data
+    assert 'coordinates' in picture_data
 
-    print(str(len(?)+' images are ready for the map')
+    assert all(isinstance(name,str) for name in picture_data['names']) == True
+
+    print(type(picture_data['dates'][0]))
+
+    #assert None not in zip(*picture_data['coordinates']):
+
+    #print(str(len(picture_data))+' images are ready for the map'))
 
     return None
 
@@ -70,8 +81,6 @@ def set_target(paths_to_files):
     elif target[-1] != '/':
         target = target+'/'
     else:
-        print('Warning!'')
-
-    print('Setting '+str(target)+' as destination path.')
+        print('Warning!')
 
     return target
