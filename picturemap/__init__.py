@@ -32,21 +32,37 @@ def set_centre(coordinates):
 
 def get_metadata(filenames, target_directory):
         print('Extracting metadata...')
+
         data_array = []
+
         for f in filenames:
             name = str(os.path.relpath(f, target_directory)) #Relative path to file
             date, coordinates = process(f)
+
             if coordinates[0] != None and coordinates[1] != None:
                 data_array.append((name,date,coordinates))
+            else:
+                print(name+'has no GPS coordinates.')
+
         result = {k:d for d,k in zip(zip(*data_array),['names','dates','coordinates'])}
-        if  len(result) < 1:
-            print('No images with GPS coordinates found.')
-            sys.exit(1)
-        print(str(len(result['names']))+' images have been added to the map') #Debug: to show dataset
+
+        test_metadata(result)
+
         return result
 
-def set_target(paths_to_files):
+def test_metadata(picture_data):
 
+    if  len(picture_data) < 1:
+        print('No images with GPS coordinates found.')
+        raise FileError
+
+
+    print(str(len(?)+' images are ready for the map')
+
+    return None
+
+def set_target(paths_to_files):
+    '''Find highest common directory of all target files.'''
     target = os.path.dirname(os.path.commonprefix(paths_to_files))
 
     if target == '':
@@ -54,7 +70,8 @@ def set_target(paths_to_files):
     elif target[-1] != '/':
         target = target+'/'
     else:
-        raise OSError
+        print('Warning!'')
 
     print('Setting '+str(target)+' as destination path.')
+
     return target

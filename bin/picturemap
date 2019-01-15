@@ -31,6 +31,7 @@ def main():
     target_directory = set_target(filenames)
     #Process files
     pictures_data = get_metadata(tqdm(filenames), target_directory) #Get name, date, coordinates
+
     pictures_data['centre'] = set_centre(pictures_data['coordinates']) #Find centre coordinates
     #Build the map
     build(pictures_data, target_directory)
