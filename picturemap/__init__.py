@@ -3,7 +3,7 @@ from json import dump
 import sys
 import os
 import subprocess
-
+from tqdm import tqdm
 
 def build(data, target):
     #Copy basemap file to target_directory
@@ -31,6 +31,7 @@ def set_centre(coordinates):
     return [sum(i)/len(i) for i in zip(*coordinates)] #Average coordinates
 
 def get_metadata(filenames, target_directory):
+        print('Extracting metadata...')
         data_array = []
         for f in filenames:
             name = str(os.path.relpath(f, target_directory)) #Relative path to file
@@ -41,7 +42,7 @@ def get_metadata(filenames, target_directory):
         if  len(result) < 1:
             print('No images with GPS coordinates found.')
             sys.exit(1)
-        print(str(len(result['names']))+' images have been added to the map: ', result['names'][:10]) #Debug: to show dataset
+        print(str(len(result['names']))+' images have been added to the map') #Debug: to show dataset
         return result
 
 def set_target(paths_to_files):
