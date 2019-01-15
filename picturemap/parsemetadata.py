@@ -46,17 +46,21 @@ def get_exif_location(exif_data):
     return lat, lon
 
 def get_exif_date(exif_data):
-    date = _get_if_exist(exif_data, 'EXIF DateTimeDigitized')
-    if date != None:
-        date = date.values
-    return date
+
+    for exif_date_tag in ['EXIF DateTimeOriginal','EXIF DateTimeDigitized', 'EXIF CreateDate']:
+        date = _get_if_exist(exif_data, exif_date_tag)
+        if date is not None:
+            return date.values
+
+    return ''
+
 
 def process(FILE):
     """
         Wrapper for exifread.process_file that extracts coordinates and date.
     """
     with open(FILE, 'rb') as f:
-        metadata = exifread.process_file(f)
+        metadata = exifread.process_file(f, strict=True)
         lat, long = get_exif_location(metadata)
         date = get_exif_date(metadata)
         return (date, (lat,long))

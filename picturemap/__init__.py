@@ -34,22 +34,21 @@ def get_metadata(filenames, target_directory):
 
         data_array = []
 
+        without_coordinates = 0 # DEBUG:
+
         for f in filenames:
             name = str(os.path.relpath(f, target_directory)) #Relative path to file
+
             date, coordinates = process(f)
 
-            no_coordinates = 0
-
-            if coordinates[0] != None and coordinates[1] != None:
+            if coordinates[0] is not None and coordinates[1] is not None:
                 data_array.append((name,date,coordinates))
             else:
-                no_coordinates += 1
+                without_coordinates += 1 ## DEBUG:
 
         result = {k:d for d,k in zip(zip(*data_array),['names','dates','coordinates'])}
 
-        print(str(no_coordinates)+' images have no GPS coordinates.')
-
-        test_metadata(result)
+        total_valid_images = test_metadata(result)
 
         return result
 
@@ -58,19 +57,22 @@ def test_metadata(picture_data):
     if  len(picture_data) < 1:
         raise FileNotFoundError('No images with GPS coordinates found.')
 
+    #Check if data array is properly constructed
     assert 'names' in picture_data
     assert 'dates' in picture_data
     assert 'coordinates' in picture_data
 
-    assert all(isinstance(name,str) for name in picture_data['names']) == True
+    #Check if all arrays have the same lenght
+    total_pictures = set(len(picture_data[key]) for key in picture_data)
+    assert len(total_pictures) <= 1
+    total_pictures = total_pictures.pop()
 
-    print(type(picture_data['dates'][0]))
+    #Check elements are not None
+    assert all(name is not None for name in picture_data['names']) == True
+    assert all(date is not None for date in picture_data['dates']) == True
+    assert all(c[0] is not None and c[1] is not None for c in picture_data['coordinates']) == True
 
-    #assert None not in zip(*picture_data['coordinates']):
-
-    #print(str(len(picture_data))+' images are ready for the map'))
-
-    return None
+    return total_pictures
 
 def set_target(paths_to_files):
     '''Find highest common directory of all target files.'''
