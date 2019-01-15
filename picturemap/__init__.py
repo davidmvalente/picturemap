@@ -1,7 +1,8 @@
 from .parsemetadata import *
 from json import dump
 import sys
-import os, subprocess
+import os
+import subprocess
 
 
 def build(data, target):
@@ -18,6 +19,7 @@ def build(data, target):
         dump(data, outfile, sort_keys=True)
 
 def launch(filepath):
+    print('Launching ', filepath)
     if sys.platform.startswith('darwin'):
         subprocess.call(('open', filepath))
     elif os.name == 'nt': # For Windows
@@ -39,11 +41,19 @@ def get_metadata(filenames, target_directory):
         if  len(result) < 1:
             print('No images with GPS coordinates found.')
             sys.exit(1)
-        print(str(len(result['names']))+' images have been added to the map: ', result['names']) #Debug: to show dataset
+        print(str(len(result['names']))+' images have been added to the map: ', result['names'][:10]) #Debug: to show dataset
         return result
 
 def set_target(paths_to_files):
+
     target = os.path.dirname(os.path.commonprefix(paths_to_files))
-    target = str(target) + '/'
+
+    if target == '':
+        target = './'
+    elif target[-1] != '/':
+        target = target+'/'
+    else:
+        raise OSError
+
     print('Setting '+str(target)+' as destination path.')
     return target
