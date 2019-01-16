@@ -4,20 +4,15 @@ import sys, os, glob
 from picturemap import *
 from tqdm import tqdm
 
-def main():
-    #Read arguments
-    script = sys.argv[0]
-    arguments = sys.argv[1:]
-
-    if len(sys.argv) < 2:
-      print("""Please specify at least one image file or a folder
+def retrieve_filenames(arguments):
+    if len(arguments) < 1:
+      raise FileNotFoundError("""Please specify at least one image file or a folder
                 \n Example: picturemap Pictures/*.jpg
                 \n Example: picturemap Pictures """)
-      sys.exit(1)  # abort because of error
 
     elif os.path.isdir(arguments[0]):
         print(arguments[0]+' is a directory')
-        print('Looking for all JPG files: '+arguments[0]+'/**/*.JPG\n')
+        print('Looking for all .JPG files: '+arguments[0]+'/**/*.JPG\n')
         filenames = []
         for filename in glob.iglob(arguments[0]+'/**/*.JPG', recursive=True):
             filenames.append(filename)
@@ -26,18 +21,29 @@ def main():
         filenames = arguments
 
     print(str(len(filenames))+ ' image files were found.\n') # NOTE
+    return filenames
+
+
+def main():
+    #Read arguments
+
+    filenames = retrieve_filenames(sys.argv[1:])
 
     #Pick destination path for visualization filenames
     target_directory = set_target(filenames)
-    print('Setting '+str(target_directory)+' as destination path.')
+    print('Setting '+str(target_directory)+' as destination path.\n')
 
     #Process files
     print('Extracting metadata...\n')
     pictures_data = get_metadata(tqdm(filenames), target_directory) #Get name, date, coordinates
-
     pictures_data['centre'] = set_centre(pictures_data['coordinates']) #Find centre coordinates
+
     #Build the map
+    print('Writing '+target_directory+'picturemap.html\n')
     build(pictures_data, target_directory)
+    print('Writing '+target_directory+'picturemap_data.json\n')
+
+    #Launching
     launch(target_directory+'picturemap.html')
 
 main()
